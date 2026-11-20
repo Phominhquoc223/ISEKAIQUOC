@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNTT 4.0 - Assignment Portal | FPT Polytechnic</title>
+  <style>
+    :root {
+      --bg-primary: #fff8f6;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.88);
+      --text-primary: #2d1e2f;
+      --text-secondary: #5c4b5e;
+      --accent: #e05a7a;
+      --accent-hover: #c94464;
+      --accent-soft: rgba(224, 90, 122, 0.12);
+      --border: rgba(224, 90, 122, 0.22);
+      --shadow: 0 10px 30px rgba(45, 30, 47, 0.08);
+      --badge-bg: #ffe4ec;
+      --badge-text: #b83254;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #14101d;
+      --bg-secondary: #1e182b;
+      --bg-card: rgba(30, 24, 43, 0.88);
+      --text-primary: #f7eef5;
+      --text-secondary: #c4b5c9;
+      --accent: #ff7597;
+      --accent-hover: #ff94ae;
+      --accent-soft: rgba(255, 117, 151, 0.15);
+      --border: rgba(255, 117, 151, 0.22);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      --badge-bg: rgba(255, 117, 151, 0.2);
+      --badge-text: #ffb3c6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ================= MÀN HÌNH HOÀNG HÔN & HOA ANH ĐÀO ================= */
+    #intro-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: linear-gradient(180deg, #1d1128 0%, #59253a 35%, #b84a39 68%, #f29f3d 92%, #ffd275 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+      overflow: hidden;
+    }
+
+    #intro-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Mặt trời lặn */
+    .sunset-sun {
+      position: absolute;
+      bottom: 18%;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff6cc 0%, #ffb74d 55%, rgba(255, 112, 67, 0) 75%);
+      box-shadow: 0 0 80px #ff9800;
+      z-index: 1;
+    }
+
+    /* Đồi núi chân trời */
+    .horizon-hills {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 24%;
+      background: #170d1c;
+      clip-path: polygon(0 45%, 22% 28%, 48% 52%, 75% 22%, 100% 42%, 100% 100%, 0% 100%);
+      z-index: 2;
+    }
+
+    /* Cây hoa anh đào SVG */
+    .sakura-tree-container {
+      position: absolute;
+      bottom: 0;
+      left: -20px;
+      width: 480px;
+      max-width: 85vw;
+      z-index: 3;
+      pointer-events: none;
+      filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+    }
+
+    #sakura-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .intro-content {
+      position: relative;
+      z-index: 5;
+      background: rgba(24, 14, 32, 0.58);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem 2.2rem;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 194, 212, 0.35);
+      max-width: 620px;
+      margin: 0 1rem;
+      color: #fff;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    .intro-badge {
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(255, 143, 171, 0.25);
+      border: 1px solid #ffb3c6;
+      color: #ffd6e0;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    .intro-content h1 {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .intro-content p {
+      font-size: 1rem;
+      color: #f3dce4;
+      margin-bottom: 1.75rem;
+    }
+
+    .btn-enter {
+      padding: 0.9rem 2.2rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #2d1122;
+      background: linear-gradient(135deg, #ffb3c6 0%, #ffd166 100%);
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 8px 25px rgba(255, 179, 198, 0.45);
+    }
+
+    .btn-enter:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 30px rgba(255, 209, 102, 0.6);
+    }
+
+    /* ================= GIAO DIỆN CHÍNH ================= */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-control {
+      background: var(--accent-soft);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.95rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-control:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    /* Thanh điều hướng Tabs */
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1.75rem;
+      background: var(--bg-secondary);
+      padding: 0.6rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    .tab-btn {
+      flex: 1 1 auto;
+      padding: 0.75rem 1.1rem;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+    }
+
+    .tab-btn:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(224, 90, 122, 0.35);
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.25rem;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      color: var(--accent);
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card h3 {
+      font-size: 1.08rem;
+      margin: 1rem 0 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 8px;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    ul.styled-list {
+      padding-left: 1.25rem;
+      margin: 0.5rem 0;
+    }
+
+    ul.styled-list li {
+      margin-bottom: 0.55rem;
+      color: var(--text-secondary);
+    }
+
+    ul.styled-list li strong {
+      color: var(--text-primary);
+    }
+
+    /* Bảng dữ liệu */
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Hộp giải đáp câu hỏi / Accordion */
+    .qa-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+      background: var(--bg-secondary);
+    }
+
+    .qa-question {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-weight: 700;
+      font-size: 0.98rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .qa-question:hover {
+      background: var(--accent-soft);
+    }
+
+    .qa-answer {
+      display: none;
+      padding: 0 1.2rem 1.1rem;
+      color: var(--text-secondary);
+      border-top: 1px dashed var(--border);
+      padding-top: 0.85rem;
+    }
+
+    .qa-item.open .qa-answer {
+      display: block;
+    }
+
+    /* Khu vực tương tác 10 ghi chú mẫu (Y5) */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .filter-bar input, .filter-bar select {
+      padding: 0.6rem 0.9rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .note-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .note-card small {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Checklist tương tác */
+    .checklist label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding: 0.65rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .checklist label:hover {
+      background: var(--accent-soft);
+    }
+
+    .checklist input[type="checkbox"] {
+      margin-top: 0.25rem;
+      accent-color: var(--accent);
+      width: 17px;
+      height: 17px;
+    }
+
+    /* Link học thêm */
+    .resource-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .resource-card {
+      display: block;
+      text-decoration: none;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      padding: 1.1rem;
+      border-radius: 14px;
+      color: var(--text-primary);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .resource-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .resource-card span {
+      display: block;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+    }
+
+    .resource-card p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    code.zip-format {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 0.35rem 0.7rem;
+      border-radius: 8px;
+      font-family: Consolas, monospace;
+      font-weight: 700;
+      margin: 0.4rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MÀN HÌNH CHÀO HOÀNG HÔN & HOA ANH ĐÀO -->
+  <section id="intro-screen">
+    <div class="sunset-sun"></div>
+    <div class="horizon-hills"></div>
+
+    <!-- Cây hoa anh đào vẽ bằng SVG -->
+    <div class="sakura-tree-container">
+      <svg viewBox="0 0 500 500" width="100%" height="100%">
+        <!-- Thân cây & Cành chính -->
+        <path d="M90,500 C95,410 120,340 155,270 C180,220 230,180 310,145 M155,270 C135,210 100,175 55,140 M185,225 C235,215 290,220 365,205 M130,330 C185,310 235,315 295,295" 
+              stroke="#24111d" stroke-width="22" stroke-linecap="round" fill="none"/>
+        <path d="M310,145 C350,125 390,115 440,110 M230,180 C250,135 285,105 330,80 M55,140 C35,115 20,95 10,75" 
+              stroke="#24111d" stroke-width="10" stroke-linecap="round" fill="none"/>
+        <!-- Tán hoa anh đào hồng hoàng hôn -->
+        <g fill="#ff8fab" opacity="0.9">
+          <circle cx="310" cy="145" r="55"/>
+          <circle cx="370" cy="130" r="48"/>
+          <circle cx="425" cy="115" r="38"/>
+          <circle cx="255" cy="120" r="52"/>
+          <circle cx="320" cy="85" r="44"/>
+          <circle cx="185" cy="175" r="58"/>
+          <circle cx="120" cy="150" r="50"/>
+          <circle cx="65" cy="130" r="45"/>
+          <circle cx="350" cy="205" r="46"/>
+          <circle cx="280" cy="215" r="42"/>
+          <circle cx="285" cy="295" r="38"/>
+        </g>
+        <g fill="#ffc2d1" opacity="0.85">
+          <circle cx="330" cy="135" r="35"/>
+          <circle cx="270" cy="105" r="32"/>
+          <circle cx="165" cy="160" r="36"/>
+          <circle cx="95" cy="135" r="30"/>
+          <circle cx="365" cy="195" r="30"/>
+        </g>
+      </svg>
+    </div>
+
+    <canvas id="sakura-canvas"></canvas>
+
+    <div class="intro-content">
+      <div class="intro-badge">FPT POLYTECHNIC • PHỤ LỤC 2 (2026)</div>
+      <h1>Assignment: CNTT 4.0</h1>
+      <p>Hệ thống tổng hợp yêu cầu, hướng dẫn giải chi tiết toàn bộ các phần (Y1 – Y6), bộ 10 ghi chú mẫu 5 ngày và tài nguyên học tập tương tác.</p>
+      <button class="btn-enter" onclick="enterWorkspace()">Khám phá Bài tập & Lời giải →</button>
+    </div>
+  </section>
+
+  <!-- GIAO DIỆN NỘI DUNG CHÍNH -->
+  <header>
+    <div class="brand">
+      <span>🌸</span>
+      <span>CNTT 4.0 • Assignment Hub</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-control" onclick="showIntro()">🌅 Xem lại Hoàng hôn</button>
+      <button class="btn-control" id="theme-toggle" onclick="toggleTheme()">☀️ Chế độ Sáng</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Thanh điều hướng các phần -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="tab-btn active" onclick="switchTab('tab-overview', this)">1. Tổng quan & Mục tiêu</button>
+      <button class="tab-btn" onclick="switchTab('tab-part1', this)">2. Phần 1: Trợ lý học tập (Y1–Y3)</button>
+      <button class="tab-btn" onclick="switchTab('tab-part2', this)">3. Phần 2: Ứng dụng Ghi chú (Y4–Y6)</button>
+      <button class="tab-btn" onclick="switchTab('tab-delivery', this)">4. Nộp bài & Bảo vệ (60%)</button>
+      <button class="tab-btn" onclick="switchTab('tab-resources', this)">5. Link Học thêm & Công cụ</button>
+    </nav>
+
+    <!-- TAB 1: TỔNG QUAN & MỤC TIÊU -->
+    <section id="tab-overview" class="tab-panel active">
+      <div class="grid-2">
+        <div class="card">
+          <span class="badge">THÔNG TIN CHUNG</span>
+          <h2>Hồ sơ Assignment CNTT 4.0</h2>
+          <ul class="styled-list">
+            <li><strong>Đơn vị đào tạo:</strong> Trường Cao đẳng FPT Polytechnic (Phụ lục 2 - Năm 2026).</li>
+            <li><strong>Module / Môn học:</strong> CNTT 4.0.</li>
+            <li><strong>Người điều phối:</strong> Giảng viên Lã Ngọc Quang.</li>
+            <li><strong>Trọng số điểm:</strong> Chiếm <strong>60%</strong> tổng điểm môn học (GĐ1: 10% + GĐ2: 10% + Bảo vệ: 40%).</li>
+            <li><strong>Hình thức thực hiện:</strong> Sinh viên tự bản thân thực hiện độc lập.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="badge">CHUẨN ĐẦU RA (A – D)</span>
+          <h2>4 Mục tiêu cốt lõi của môn học</h2>
+          <ul class="styled-list">
+            <li><strong>Mục tiêu (A):</strong> Hiểu tổng quan về sự phát triển và nhận biết xu hướng tương lai của ngành CNTT.</li>
+            <li><strong>Mục tiêu (B):</strong> Biết sử dụng và ứng dụng hiệu quả các công cụ số/AI vào quá trình học tập.</li>
+            <li><strong>Mục tiêu (C):</strong> Tự tay thiết kế và xây dựng được ứng dụng nhỏ phục vụ nhu cầu cá nhân.</li>
+            <li><strong>Mục tiêu (D):</strong> Nắm bắt thêm thông tin về các chuyên ngành và cơ hội nghề nghiệp trong lĩnh vực CNTT.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Lộ trình thực hiện nhanh toàn bộ Assignment</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Giai đoạn</th>
+                <th>Mã yêu cầu</th>
+                <th>Sản phẩm đầu ra</th>
+                <th>Công cụ chính</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Phần 1: Trợ lý học tập</strong></td>
+                <td>Y1, Y2, Y3 (mở rộng)</td>
+                <td>Thư viện số cá nhân chứa đủ 8 slide bài học + đa phương tiện + ghi chú</td>
+                <td>Google NotebookLM</td>
+              </tr>
+              <tr>
+                <td><strong>Phần 2: Ứng dụng cá nhân</strong></td>
+                <td>Y4, Y5, Y6 (mở rộng)</td>
+                <td>Bản vẽ phác thảo + App Quản lý ghi chú (≥10 ghi chú, ≥5 ngày) + Tích hợp AI</td>
+                <td>DrawIO / Figma / Canva + Google AI Studio</td>
+              </tr>
+              <tr>
+                <td><strong>Đóng gói & Bảo vệ</strong></td>
+                <td>Nộp bài & Vấn đáp</td>
+                <td>Báo cáo (PDF/Word/Docs) + Slide (tùy chọn) nén thành file <code>.zip</code></td>
+                <td>LMS / Trình bày trực tiếp</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: PHẦN 1 - TRỢ LÝ HỌC TẬP -->
+    <section id="tab-part1" class="tab-panel">
+      <div class="card">
+        <span class="badge">PHẦN 1 • CÔNG CỤ: GOOGLE NOTEBOOKLM</span>
+        <h2>Giải chi tiết Yêu cầu Y1, Y2 & Y3</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Mục tiêu của Phần 1 là rèn luyện kỹ năng tìm kiếm, khai thác thông tin và tự xây dựng "thư viện số" phục vụ việc học tập cá nhân bằng <strong>Google NotebookLM</strong>.
+        </p>
+
+        <div class="qa-item open">
+          <button class="qa-question" onclick="toggleQA(this)">
+            <span>Giải đáp Y1: Thu thập tài liệu & Xây dựng thư viện số cho môn học</span>
+            <span>▼</span>
+          </button>
+          <div class="qa-answer">
+            <p><strong>Cách thực hiện chuẩn:</strong></p>
+            <ul class="styled-list">
+              <li>Truy cập <strong>Google NotebookLM</strong>, tạo một Notebook mới đặt tên: <code>[MSSV] - Thư viện số CNTT 4.0</code>.</li>
+              <li>Tải lên đầy đủ toàn bộ <strong>8 slide bài học</strong> của môn CNTT 4.0 từ hệ thống học tập của trường.</li>
+              <li>Sử dụng tính năng <em>Notebook Guide / Briefing Doc</em> của NotebookLM để AI tự động tóm tắt mục lục 8 bài học làm khung kiến thức nền.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item open">
+          <button class="qa-question" onclick="toggleQA(this)">
+            <span>Giải đáp Y2: Đảm bảo đủ 4 định dạng nguồn trong Thư viện số (a, b, c, d)</span>
+            <span>▼</span>
+          </button>
+          <div class="qa-answer">
+            <ul class="styled-list">
+              <li><strong>a) Dạng tập tin (File):</strong> Tải lên các file PDF giáo trình, tài liệu Word (.docx) hoặc file văn bản tổng hợp kiến thức chuyên ngành CNTT.</li>
+              <li><strong>b) Hình ảnh hay Video:</strong> Chèn link video YouTube bài giảng/hướng dẫn liên quan đến AI, điện toán đám mây, hoặc tài liệu chứa sơ đồ minh họa kiến trúc hệ thống.</li>
+              <li><strong>c) Link tham chiếu đến website khác:</strong> Dùng tính năng <em>Add Source → Website</em> để gắn link các trang công nghệ uy tín (ví dụ: Google AI Blog, FPT TechInsight, W3Schools, Roadmap.sh).</li>
+              <li><strong>d) Các ghi chú của bản thân:</strong> Tạo các thẻ <em>Note</em> trực tiếp trong NotebookLM để đúc kết lại kiến thức sau mỗi bài học (không chỉ copy-paste mà cần viết lại theo ý hiểu cá nhân).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <button class="qa-question" onclick="toggleQA(this)">
+            <span>Giải đáp Y3 (Mở rộng): Xây dựng thư viện cá nhân cho các môn học khác</span>
+            <span>▼</span>
+          </button>
+          <div class="qa-answer">
+            <p>Để đạt điểm tối đa phần mở rộng, bạn hãy tạo thêm từ <strong>1 đến 2 Notebook khác</strong> trên trang chủ NotebookLM cho các môn đang học song song (ví dụ: <em>Tin học cơ sở</em>, <em>Nhập môn Lập trình C++</em>, hoặc <em>Tiếng Anh</em>), mỗi môn nạp ít nhất 3–5 nguồn tài liệu và 2 ghi chú tóm tắt rồi chụp ảnh màn hình giao diện tổng quan đưa vào báo cáo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: PHẦN 2 - ỨNG DỤNG QUẢN LÝ GHI CHÚ -->
+    <section id="tab-part2" class="tab-panel">
+      <div class="card">
+        <span class="badge">PHẦN 2 • GOOGLE AI STUDIO & WIREFRAME</span>
+        <h2>Giải chi tiết Yêu cầu Y4, Y5 & Y6</h2>
+
+        <div class="qa-item open">
+          <button class="qa-question" onclick="toggleQA(this)">
+            <span>Giải đáp Y4: Bản vẽ phác thảo mô tả ứng dụng (a, b, c)</span>
+            <span>▼</span>
+          </button>
+          <div class="qa-answer">
+            <p>Sử dụng <strong>Draw.io, Figma hoặc Canva</strong> để vẽ sơ đồ luồng hoạt động và giao diện trước khi lập trình:</p>
+            <ul class="styled-list">
+              <li><strong>a) Giao diện chính:</strong> Phác thảo bố cục màn hình trang chủ gồm thanh tìm kiếm, bộ lọc danh mục/ngày, nút "Thêm ghi chú mới" và danh sách thẻ ghi chú.</li>
+              <li><strong>b) Giao diện các chức năng chính:</strong> Phác thảo khung nhập liệu (Tiêu đề, Nội dung, Ngày tạo, Nhãn môn học), khung xem chi tiết/chỉnh sửa và nút xóa.</li>
+              <li><strong>c) Cách vận hành các chức năng chính:</strong> Vẽ sơ đồ luồng (Flowchart): <em>Người dùng nhập ghi chú → Lưu vào bộ nhớ (LocalStorage/Database) → Hiển thị lên danh sách → Gọi AI tóm tắt/gợi ý</em>.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="qa-item open">
+          <button class="qa-question" onclick="toggleQA(this)">
+            <span>Giải đáp Y6 (Mở rộng): Ứng dụng Trí tuệ nhân tạo (AI) trong quản lý ghi chú</span>
+            <span>▼</span>
+          </button>
+          <div class="qa-answer">
+            <p>Trong <strong>Google AI Studio</strong>, bạn có thể tích hợp Gemini API hoặc dùng prompt xây dựng ứng dụng web/app có các tính năng AI thực tế sau:</p>
+            <ul class="styled-list">
+              <li><strong>Tự động tóm tắt ghi chú dài:</strong> Chuyển đoạn ghi chép bài giảng dài thành 3 gạch đầu dòng cốt lõi.</li>
+              <li><strong>Tự động gắn thẻ (Auto-tagging) & Phân loại:</strong> AI tự nhận diện ghi chú thuộc chủ đề Học tập, Lập trình hay Lịch trình.</li>
+              <li><strong>Tạo câu hỏi ôn tập từ ghi chú:</strong> AI tự sinh 3 câu hỏi trắc nghiệm kiểm tra kiến thức dựa trên nội dung bạn vừa ghi chép.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHU VỰC TƯƠNG TÁC Y5: 10 GHI CHÚ MẪU TRONG 5 NGÀY -->
+      <div class="card">
+        <span class="badge">GIẢI ĐÁP Y5 • DỮ LIỆU MẪU ĐẠT CHUẨN</span>
+        <h2>Bộ 10 Ghi chú cá nhân có ý nghĩa (Áp dụng 5 ngày)</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Y5 yêu cầu tối thiểu <strong>10 ghi chú cá nhân có ý nghĩa</strong> và thời gian áp dụng ít nhất <strong>5 ngày</strong>. Dưới đây là bộ dữ liệu mẫu chuẩn bạn có thể dùng để kiểm thử và đưa vào ứng dụng của mình:
+        </p>
+
+        <div class="filter-bar">
+          <input type="text" id="note-search" placeholder="🔍 Tìm nội dung ghi chú..." oninput="renderNotes()" />
+          <select id="day-filter" onchange="renderNotes()">
+            <option value="ALL">Tất cả 5 ngày</option>
+            <option value="Ngày 1">Ngày 1</option>
+            <option value="Ngày 2">Ngày 2</option>
+            <option value="Ngày 3">Ngày 3</option>
+            <option value="Ngày 4">Ngày 4</option>
+            <option value="Ngày 5">Ngày 5</option>
+          </select>
+        </div>
+
+        <div class="notes-grid" id="notes-container"></div>
+      </div>
+    </section>
+
+    <!-- TAB 4: ĐÓNG GÓI, TIÊU CHÍ CHẤM & BẢO VỆ -->
+    <section id="tab-delivery" class="tab-panel">
+      <div class="grid-2">
+        <div class="card">
+          <span class="badge">SẢN PHẨM PHẢI NỘP</span>
+          <h2>Quy cách đóng gói & Checklist trước khi nộp</h2>
+          <p style="color: var(--text-secondary);">Đặt tên file nén bắt buộc theo cú pháp:</p>
+          <code class="zip-format">&lt;Mã sinh viên - Tên sinh viên&gt;_CNTT4.0_Assignment.zip</code>
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Ví dụ chuẩn: <strong>PK04952-PhoMinhQuocKnul_CNTT4.0_Assignment.zip</strong>
+          </p>
+
+          <div class="checklist">
+            <label><input type="checkbox" checked /> <span><strong>Báo cáo quá trình thực hiện:</strong> Định dạng PDF, Word (.docx) hoặc Google Docs đầy đủ ảnh chụp minh chứng Y1–Y6.</span></label>
+            <label><input type="checkbox" checked /> <span><strong>Link Thư viện số NotebookLM:</strong> Đã bật chế độ chia sẻ và gắn link trong báo cáo.</span></label>
+            <label><input type="checkbox" checked /> <span><strong>Bản vẽ phác thảo (Y4):</strong> Ảnh sơ đồ giao diện & luồng chức năng rõ nét.</span></label>
+            <label><input type="checkbox" checked /> <span><strong>Mã nguồn / Link App (Y5–Y6):</strong> Có sẵn 10 ghi chú trải đều 5 ngày.</span></label>
+            <label><input type="checkbox" /> <span><strong>Slide trình bày tóm tắt (Tùy chọn bổ sung):</strong> File PowerPoint/Canva phục vụ buổi bảo vệ.</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="badge">THANG ĐIỂM & TIÊU CHÍ</span>
+          <h2>Cơ cấu điểm & 4 Tiêu chí chấm thực hành</h2>
+          <ul class="styled-list">
+            <li><strong>Điểm Giai đoạn 1:</strong> 10% (Kiểm tra tiến độ Phần 1).</li>
+            <li><strong>Điểm Giai đoạn 2:</strong> 10% (Kiểm tra tiến độ Phần 2).</li>
+            <li><strong>Điểm Bảo vệ Assignment:</strong> 40% (Thực hành trực tiếp + Trả lời vấn đáp giảng viên).</li>
+          </ul>
+          <h3>4 Tiêu chí đánh giá phần thực hành:</h3>
+          <ul class="styled-list">
+            <li><strong>1. Nội dung:</strong> Đầy đủ toàn bộ các hạng mục Y1–Y5 và phần mở rộng Y3, Y6.</li>
+            <li><strong>2. Thời gian:</strong> Hoàn thành và trình bày đúng thời gian quy định.</li>
+            <li><strong>3. Kỹ năng trình bày:</strong> Rõ ràng, dễ hiểu, mạch lạc, tự tin.</li>
+            <li><strong>4. Sản phẩm:</strong> Giao diện đẹp, sinh động, có tính sáng tạo cá nhân.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- BỘ CÂU HỎI VẤN ĐÁP BẢO VỆ -->
+      <div class="card">
+        <span class="badge">BÍ KÍP BẢO VỆ (40% ĐIỂM)</span>
+        <h2>Giải đáp các câu hỏi vấn đáp thường gặp của Giảng viên</h2>
+
+        <div class="qa-item">
+          <button class="qa-question" onclick="toggleQA(this)">
+            <span>Câu 1: Tại sao nên dùng Google NotebookLM thay vì chỉ hỏi ChatGPT thông thường?</span>
+            <span>▼</span>
+          </button>
+          <div class="qa-answer">
+            <strong>Trả lời:</strong> Vì NotebookLM hoạt động dựa trên cơ chế <em>Grounding (bám sát nguồn tài liệu do chính người dùng tải lên)</em>. Khi hỏi đáp, AI sẽ trích dẫn chính xác vị trí từ 8 slide bài học và tài liệu cá nhân của em, hạn chế tối đa tình trạng "ảo giác thông tin" (bịa kiến thức ngoài lề).
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <button class="qa-question" onclick="toggleQA(this)">
+            <span>Câu 2: Em hãy thao tác trực tiếp một chức năng trên ứng dụng Quản lý ghi chú và giải thích luồng dữ liệu?</span>
+            <span>▼</span>
+          </button>
+          <div class="qa-answer">
+            <strong>Trả lời:</strong> Khi em nhập tiêu đề, nội dung và bấm "Lưu", dữ liệu được đóng gói thành một đối tượng (Object) kèm dấu thời gian (Timestamp). Hệ thống lưu đối tượng này vào bộ nhớ trình duyệt (LocalStorage) hoặc cơ sở dữ liệu, sau đó tự động cập nhật lại giao diện danh sách mà không làm mất dữ liệu khi tải lại trang.
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <button class="qa-question" onclick="toggleQA(this)">
+            <span>Câu 3: Tính năng AI trong ứng dụng của em giải quyết vấn đề thực tế gì cho người dùng?</span>
+            <span>▼</span>
+          </button>
+          <div class="qa-answer">
+            <strong>Trả lời:</strong> Khi sinh viên ghi chép nhanh trên lớp, nội dung thường lộn xộn và dài dòng. Tính năng AI giúp tự động tóm tắt ý chính, phân loại nhãn môn học và gợi ý các đầu việc cần làm tiếp theo, giúp tiết kiệm thời gian ôn tập trước kỳ thi.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: LINK HỌC THÊM & CÔNG CỤ -->
+    <section id="tab-resources" class="tab-panel">
+      <div class="card">
+        <span class="badge">TÀI NGUYÊN & CÔNG CỤ CHÍNH THỨC</span>
+        <h2>Danh sách Link công cụ & Tài liệu học mở rộng</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.2rem;">
+          Nhấn trực tiếp vào các thẻ bên dưới để mở công cụ thực hiện Assignment hoặc tham khảo thêm kiến thức cho Phần 1 (Y2-c):
+        </p>
+
+        <div class="resource-links">
+          <a class="resource-card" href="https://notebooklm.google.com/" target="_blank" rel="noopener">
+            <span>1. Google NotebookLM ↗</span>
+            <p>Công cụ chính cho Phần 1: Tạo thư viện số cá nhân, nạp 8 slide bài giảng và tạo ghi chú tóm tắt.</p>
+          </a>
+
+          <a class="resource-card" href="https://aistudio.google.com/" target="_blank" rel="noopener">
+            <span>2. Google AI Studio ↗</span>
+            <p>Công cụ chính cho Phần 2: Thử nghiệm prompt, lấy API Gemini và xây dựng ứng dụng quản lý ghi chú thông minh.</p>
+          </a>
+
+          <a class="resource-card" href="https://app.diagrams.net/" target="_blank" rel="noopener">
+            <span>3. Draw.io (Diagrams.net) ↗</span>
+            <p>Công cụ vẽ phác thảo miễn phí cho Yêu cầu Y4: Thiết kế Wireframe giao diện và sơ đồ luồng hoạt động.</p>
+          </a>
+
+          <a class="resource-card" href="https://www.figma.com/" target="_blank" rel="noopener">
+            <span>4. Figma Design ↗</span>
+            <p>Công cụ thiết kế UI/UX chuyên nghiệp để phác thảo giao diện ứng dụng ghi chú trực quan, sinh động.</p>
+          </a>
+
+          <a class="resource-card" href="https://www.canva.com/" target="_blank" rel="noopener">
+            <span>5. Canva ↗</span>
+            <p>Dùng để vẽ phác thảo nhanh và thiết kế Slide trình bày tóm tắt quá trình thực hiện Assignment.</p>
+          </a>
+
+          <a class="resource-card" href="https://roadmap.sh/" target="_blank" rel="noopener">
+            <span>6. Roadmap.sh (Tài liệu Mục tiêu D) ↗</span>
+            <p>Lộ trình chi tiết các chuyên ngành và nghề nghiệp trong lĩnh vực CNTT để bổ sung vào thư viện số.</p>
+          </a>
+
+          <a class="resource-card" href="https://developer.mozilla.org/vi/" target="_blank" rel="noopener">
+            <span>7. MDN Web Docs ↗</span>
+            <p>Tài liệu chuẩn về HTML/CSS/JavaScript hỗ trợ tùy biến giao diện ứng dụng cá nhân đẹp mắt.</p>
+          </a>
+
+          <a class="resource-card" href="https://ai.google.dev/gemini-api/docs" target="_blank" rel="noopener">
+            <span>8. Tài liệu Gemini API (Y6) ↗</span>
+            <p>Hướng dẫn tích hợp tính năng tóm tắt, phân loại ghi chú bằng AI vào ứng dụng cá nhân.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* ================= 1. ĐIỀU KHIỂN MÀN HÌNH HOÀNG HÔN & HOA RƠI ================= */
+    const canvas = document.getElementById('sakura-canvas');
+    const ctx = canvas.getContext('2d');
+    let petals = [];
+    let animationId;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Petal {
+      constructor() {
+        this.reset(true);
+      }
+      reset(initial = false) {
+        this.x = initial ? Math.random() * canvas.width : Math.random() * (canvas.width * 0.65);
+        this.y = initial ? Math.random() * canvas.height : Math.random() * (canvas.height * 0.35);
+        this.size = 7 + Math.random() * 8;
+        this.speedX = 0.8 + Math.random() * 1.4;
+        this.speedY = 0.9 + Math.random() * 1.5;
+        this.angle = Math.random() * Math.PI * 2;
+        this.spin = (Math.random() - 0.5) * 0.04;
+        this.color = Math.random() > 0.4 ? '#ffb3c6' : '#ff8fab';
+      }
+      update() {
+        this.x += this.speedX + Math.sin(this.angle) * 0.4;
+        this.y += this.speedY;
+        this.angle += this.spin;
+        if (this.y > canvas.height + 20 || this.x > canvas.width + 20) {
+          this.reset(false);
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle);
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(this.size / 2, -this.size / 2, this.size, 0, 0, this.size);
+        ctx.bezierCurveTo(-this.size, 0, -this.size / 2, -this.size / 2, 0, 0);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function initPetals() {
+      petals = Array.from({ length: 55 }, () => new Petal());
+    }
+
+    function animatePetals() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      petals.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      animationId = requestAnimationFrame(animatePetals);
+    }
+
+    initPetals();
+    animatePetals();
+
+    function enterWorkspace() {
+      document.getElementById('intro-screen').classList.add('hidden');
+    }
+
+    function showIntro() {
+      document.getElementById('intro-screen').classList.remove('hidden');
+    }
+
+    /* ================= 2. CHUYỂN ĐỔI GIAO DIỆN SÁNG / TỐI ================= */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      const current = html.getAttribute('data-theme');
+      if (current === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        btn.textContent = '🌙 Chế độ Tối';
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        btn.textContent = '☀️ Chế độ Sáng';
+      }
+    }
+
+    /* ================= 3. CHUYỂN TAB & ACCORDION ================= */
+    function switchTab(tabId, btnElement) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
+    function toggleQA(button) {
+      button.parentElement.classList.toggle('open');
+    }
+
+    /* ================= 4. DỮ LIỆU 10 GHI CHÚ MẪU 5 NGÀY (Y5) ================= */
+    const sampleNotes = [
+      { day: 'Ngày 1', title: '1. Tổng quan Cách mạng CNTT 4.0', content: 'Ghi nhớ 4 trụ cột công nghệ: AI, IoT, Big Data và Cloud Computing. Tác động trực tiếp đến tự động hóa phần mềm.' },
+      { day: 'Ngày 1', title: '2. Khởi tạo NotebookLM môn học', content: 'Đã tải lên đủ 8 slide bài học CNTT 4.0. Sử dụng tính năng Briefing Doc để tạo đề cương ôn tập nhanh.' },
+      { day: 'Ngày 2', title: '3. Phân biệt các chuyên ngành CNTT', content: 'So sánh lộ trình Phát triển phần mềm, Thiết kế Web, Lập trình Mobile và Ứng dụng AI theo chuẩn đầu ra (D).' },
+      { day: 'Ngày 2', title: '4. Tổng hợp nguồn tài liệu đa phương tiện', content: 'Bổ sung 2 video phân tích xu hướng nghề nghiệp IT 2026 và 3 bài viết chuyên sâu vào thư viện số.' },
+      { day: 'Ngày 3', title: '5. Thiết kế Wireframe ứng dụng Ghi chú', content: 'Hoàn thành bản vẽ phác thảo 3 màn hình chính trên Draw.io: Trang chủ, Thêm/Sửa ghi chú và Bộ lọc AI.' },
+      { day: 'Ngày 3', title: '6. Xây dựng luồng xử lý dữ liệu (Flowchart)', content: 'Xác định quy trình CRUD (Thêm, Xem, Sửa, Xóa) và lưu trữ dữ liệu bền vững bằng LocalStorage.' },
+      { day: 'Ngày 4', title: '7. Thử nghiệm Prompt trên Google AI Studio', content: 'Tối ưu câu lệnh giúp AI tự động tóm tắt ghi chú dài thành 3 gạch đầu dòng súc tích trong 2 giây.' },
+      { day: 'Ngày 4', title: '8. Tích hợp tính năng gắn nhãn tự động', content: 'Phân loại ghi chú theo 3 nhóm: Học tập, Đồ án, Lịch trình cá nhân để dễ dàng tìm kiếm.' },
+      { day: 'Ngày 5', title: '9. Kiểm thử & Mở rộng thư viện môn C++', content: 'Tạo thêm thư viện số thứ 2 cho môn Nhập môn lập trình để hoàn thành yêu cầu mở rộng Y3.' },
+      { day: 'Ngày 5', title: '10. Rà soát đóng gói hồ sơ Assignment', content: 'Kiểm tra đủ 10 ghi chú, chụp ảnh minh chứng từng bước và nén file theo chuẩn MSSV-HoTen_CNTT4.0_Assignment.zip.' }
+    ];
+
+    function renderNotes() {
+      const keyword = document.getElementById('note-search').value.toLowerCase();
+      const selectedDay = document.getElementById('day-filter').value;
+      const container = document.getElementById('notes-container');
+
+      const filtered = sampleNotes.filter(n => {
+        const matchDay = selectedDay === 'ALL' || n.day === selectedDay;
+        const matchText = n.title.toLowerCase().includes(keyword) || n.content.toLowerCase().includes(keyword);
+        return matchDay && matchText;
+      });
+
+      container.innerHTML = filtered.map(n => `
+        <div class="note-card">
+          <small>📅 ${n.day}</small>
+          <h4 style="margin: 0.35rem 0;">${n.title}</h4>
+          <p style="font-size: 0.88rem; color: var(--text-secondary);">${n.content}</p>
+        </div>
+      `).join('');
+    }
+
+    renderNotes();
+  </script>
+</body>
+</html>
